@@ -4,8 +4,8 @@ import Pipes (Producer, next, yield, lift)
 
 -- |orderedZip takes a comparison function and two producers and merges them together, creating a new Producer that yields pairs or Maybes of the two datatables provided by the two original producers
 orderedZip :: (Monad m) => (a -> b -> Ordering) -- ^The function to compare types of a with b
-           -> Producer a m r1 -- ^The first producer
-           -> Producer b m r2 -- ^The second producer
+           -> Producer a m r1 -- ^The first producer (has to be ordered)
+           -> Producer b m r2 -- ^The second producer (has to be ordered)
            -> Producer (Maybe a, Maybe b) m (r1, r2) -- ^The merged producer
 orderedZip ord p1 p2 = do
     p1Front <- lift $ next p1

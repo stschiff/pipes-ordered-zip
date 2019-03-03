@@ -1,6 +1,6 @@
 # pipes-ordered-zip
 
-A function to tie together two Haskell Iterators (Producers from the [pipes library](http://hackage.haskell.org/package/pipes)) in an ordered fashion.
+A function to tie together two sorted Haskell Iterators (Producers from the [pipes library](http://hackage.haskell.org/package/pipes)).
 
 Example:
 
@@ -9,8 +9,8 @@ Example:
     import Pipes.OrderedZip (orderedZip)
 
     main = do
-        let a = each [1,3,4,6,8]
-            b = each [2,3,4,5,8]
+        let a = each [1,3,4,6,8] -- has to be ordered
+            b = each [2,3,4,5,8] -- has to be ordered
         let mergedProd = orderedZip compare a b
         _ <- runEffect $ mergedProd >-> P.print
         return ()
