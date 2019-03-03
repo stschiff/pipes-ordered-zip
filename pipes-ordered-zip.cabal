@@ -1,0 +1,30 @@
+name:                pipes-ordered-zip
+version:             0.1.0.0
+synopsis:            merge two ordered Producers into a new Producer
+description:         provides a simple function to merge two Pipes-Producers into a new Producer that yields pairs of values of the original producers, but using Maybes to indicate values that are only present in the first, second or both producers. Useful to perform Left-Joins, Right-Joins and Inner-Joins on the fly using Haskell Pipes.
+homepage:            https://github.com/githubuser/pipes-ordered-zip#readme
+license:             BSD3
+license-file:        LICENSE
+author:              Stephan Schiffels
+maintainer:          stephan_schiffels@mac.com
+copyright:           2019 Stephan Schiffels
+category:            Bioinformatics
+build-type:          Simple
+cabal-version:       >=1.10
+extra-source-files:  README.md
+
+library
+  exposed-modules:     Pipes.OrderedZip
+  hs-source-dirs:      src
+  default-language:    Haskell2010
+  build-depends:       base >= 4.7 && < 5,
+                       pipes
+
+Test-Suite pipes-ordered-zip-tests
+  type:                exitcode-stdio-1.0
+  main-is:             testMain.hs
+  hs-source-dirs:      src-tests
+  build-depends:       base, pipes-ordered-zip,
+                       pipes,
+                       foldl
+  default-language:    Haskell2010
