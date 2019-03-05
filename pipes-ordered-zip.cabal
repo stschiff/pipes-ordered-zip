@@ -1,5 +1,5 @@
 name:                pipes-ordered-zip
-version:             1.0.0.1
+version:             1.0.0.2
 synopsis:            merge two ordered Producers into a new Producer
 description:         provides a simple function to merge two Pipes-Producers into a new Producer that yields pairs of values of the original producers, but using Maybes to indicate values that are only present in the first, second or both producers. Useful to perform Left-Joins, Right-Joins and Inner-Joins on the fly using Haskell Pipes.
 homepage:            https://github.com/githubuser/pipes-ordered-zip#readme
@@ -18,13 +18,14 @@ library
   hs-source-dirs:      src
   default-language:    Haskell2010
   build-depends:       base >= 4.7 && < 5,
-                       pipes
+                       pipes >= 4 && < 5
 
 Test-Suite pipes-ordered-zip-tests
   type:                exitcode-stdio-1.0
   main-is:             testMain.hs
   hs-source-dirs:      src-tests
-  build-depends:       base, pipes-ordered-zip,
+  build-depends:       base,
+                       pipes-ordered-zip,
                        pipes,
-                       foldl
+                       foldl >= 1.4 && < 2
   default-language:    Haskell2010
