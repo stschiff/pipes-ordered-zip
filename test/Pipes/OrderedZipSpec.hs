@@ -35,3 +35,7 @@ testOrderCheckPipe = describe "orderCheckPipe" $ do
         p = a >-> orderCheckPipe compare
     it "should throw if invalid input order is given" $
         runSafeT (purely fold' list p) `shouldThrow` (==WrongInputOrderException "ordering violated: 4 should come after 3")
+    it "should do nothing if input is ordered" $ do
+        let a' = each ([1,3,4,6,8] :: [Int])
+            p' = a' >-> orderCheckPipe compare
+        runSafeT (fst <$> purely fold' list p') `shouldReturn` [1, 3, 4, 6, 8]
