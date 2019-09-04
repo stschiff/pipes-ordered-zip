@@ -1,7 +1,11 @@
 -- |A function to tie together two sorted Haskell Iterators
-module Pipes.OrderedZip (orderedZip) where
+module Pipes.OrderedZip (orderedZip, orderCheckPipe, WrongInputOrderException(..)) where
 
-import Pipes (Producer, next, yield, lift)
+import Control.Exception (Exception)
+import Control.Monad.IO.Class (MonadIO, liftIO)
+import Data.IORef (newIORef, readIORef, writeIORef)
+import Pipes (Producer, next, yield, lift, Pipe, for, cat)
+import Pipes.Safe (MonadSafe, throwM)
 
 -- |orderedZip takes a comparison function and two producers and merges them 
 -- together, creating a new Producer that yields pairs of Maybes of the two 
@@ -41,3 +45,22 @@ orderedZip ord p1 p2 = do
                     yield (Nothing, Just p2a)
                     p2Front' <- lift $ next p2Rest
                     go ord' p1Front p1' p2Front' p2Rest
+
+-- an exception type to represent invalid input order
+data WrongInputOrderException = WrongInputOrderException String deriving (Show, Eq)
+instance Exception WrongInputOrderException
+
+-- a pipe to check wether the stream is ordered according to a custom ordering function
+orderCheckPipe :: (MonadIO m, MonadSafe m, Show a) => (a -> a -> Ordering) -- ^the custom ordering function
+               -> Pipe a a m r -- ^the resulting pipe
+orderCheckPipe cmpFunc = do
+    lastValRef <- liftIO $ newIORef (Nothing)
+    for cat $ \entry -> do
+        lastVal <- liftIO $ readIORef lastValRef
+        case lastVal of
+            Nothing -> return ()
+            Just p -> case cmpFunc entry p of
+                LT -> throwM $ WrongInputOrderException ("ordering violated: " ++ show p ++ " should come after " ++ show entry)
+                _ -> return ()
+        liftIO $ writeIORef lastValRef (Just entry)
+        yield entry
