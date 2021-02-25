@@ -8,3 +8,5 @@ main = do
     let mergedProd = orderedZip compare a b
     _ <- runEffect $ mergedProd >-> P.print
     return ()
+
+    
